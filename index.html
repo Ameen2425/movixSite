@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MOVIX AI – Discover Your Next Favorite Movie</title>
+
+  <!-- SEO -->
+  <meta name="description"
+        content="Cinematic, ultra‑premium movie search app powered by the OMDb API. Explore titles, ratings, trailers, cast information, and build your personal watchlist." />
+
+  <!-- Google Fonts – premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Favicons -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>" />
+</head>
+<body>
+  <!-- -------------------------------------------------
+       Interactive Spotlight & Particle Background
+  --------------------------------------------------- -->
+  <div id="spotlight-glow" class="spotlight-glow"></div>
+  <div id="cursor-glow" class="cursor-glow"></div>
+  <canvas id="bg-canvas" class="bg-canvas"></canvas>
+  <div class="aurora-bg">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+
+  <!-- -------------------------------------------------
+       Floating Glass Navigation Bar
+  --------------------------------------------------- -->
+  <nav class="navbar glass">
+    <div class="navbar-container">
+      <a href="#" class="logo-container">
+        <svg class="logo-icon" viewBox="0 0 24 24">
+          <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 8H2v12h20V4h-4zM4 18v-8h16v8H4z"/>
+        </svg>
+        <span class="logo-text">MOVIX<span class="logo-gradient">SITE</span></span>
+      </a>
+
+      <!-- Desktop Links -->
+      <div class="nav-links-wrapper">
+        <ul id="nav-links" class="nav-links">
+          <li><a href="#" class="nav-link active">Home</a></li>
+          <li><a href="#trending" class="nav-link">Trending</a></li>
+          <li><a href="#popular" class="nav-link">Popular</a></li>
+          <li><a href="#favorites-section" class="nav-link">My Universe</a></li>
+        </ul>
+      </div>
+
+      <!-- Actions -->
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="theme-toggle btn-ripple btn-magnetic" aria-label="Toggle Theme">
+          <span id="theme-icon" class="theme-icon">🌙</span>
+        </button>
+
+        <!-- Favorites Trigger -->
+        <button id="open-fav-drawer" class="navbar-fav-btn btn-ripple btn-magnetic" aria-label="Open Watchlist">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span id="fav-badge" class="fav-badge">0</span>
+        </button>
+
+        <!-- Hamburger Menu -->
+        <button id="hamburger" class="hamburger btn-ripple" aria-label="Menu" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu glass" aria-hidden="true">
+      <ul class="mobile-nav-links">
+        <li><a href="#" class="mobile-nav-link active">Home</a></li>
+        <li><a href="#trending" class="mobile-nav-link">Trending</a></li>
+        <li><a href="#popular" class="mobile-nav-link">Popular</a></li>
+        <li><a href="#favorites-section" class="mobile-nav-link">My Universe</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- -------------------------------------------------
+       HERO SECTION
+  --------------------------------------------------- -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <div class="hero-tag-glow">The Home of Movies</div>
+      <h1 class="hero-title">DISCOVER MOVIES LIKE NEVER BEFORE</h1>
+      <p class="hero-subtitle">
+        Search millions of movies, explore ratings, cast details, trailers, reviews, and build your personal movie universe.
+      </p>
+
+      <!-- Search Wrapper -->
+      <div class="search-container-wrapper">
+        <div class="search-panel glass">
+          <div class="search-input-wrapper">
+            <svg class="icon-search" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35a7.5 7.5 0 10-1.41 1.41L21 21zM10 16a6 6 0 110-12 6 6 0 010 12z"/></svg>
+            <input type="text"
+                   id="search-input"
+                   placeholder="Enter movie, TV show, or series title..."
+                   autocomplete="off"
+                   spellcheck="false" />
+            <button id="voice-search" class="voice-btn btn-ripple" aria-label="Voice search">
+              <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zM5 12a7 7 0 0014 0h-2a5 5 0 01-10 0H5z"/></svg>
+            </button>
+          </div>
+          <button id="search-btn" class="search-btn glass btn-ripple btn-magnetic">
+            <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35a7.5 7.5 0 10-1.41 1.41L21 21zM10 16a6 6 0 110-12 6 6 0 010 12z"/></svg>
+            <span>Search</span>
+          </button>
+        </div>
+
+        <!-- Search Suggestions -->
+        <div id="search-suggestions" class="search-suggestions glass hidden">
+          <div class="suggestions-header">
+            <span>Recent Searches</span>
+            <button id="clear-suggestions-btn" class="clear-btn">Clear All</button>
+          </div>
+          <ul id="suggestions-list" class="suggestions-list"></ul>
+        </div>
+      </div>
+
+      <!-- Quick Genre/Tag Suggestions -->
+      <div class="quick-tags-container">
+        <span class="quick-tags-label">Trending Tags:</span>
+        <div class="quick-tags">
+          <button class="quick-tag btn-ripple" data-query="Batman">Batman</button>
+          <button class="quick-tag btn-ripple" data-query="Avengers">Avengers</button>
+          <button class="quick-tag btn-ripple" data-query="Interstellar">Interstellar</button>
+          <button class="quick-tag btn-ripple" data-query="Anime">Anime</button>
+          <button class="quick-tag btn-ripple" data-query="Sci-Fi">Sci-Fi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <a href="#trending" class="scroll-indicator" aria-label="Scroll Down">
+      <span class="scroll-mouse">
+        <span class="scroll-wheel"></span>
+      </span>
+      <span class="scroll-arrow"></span>
+    </a>
+  </section>
+
+  <!-- -------------------------------------------------
+       MAIN CONTENT
+  --------------------------------------------------- -->
+  <main class="main-content">
+    
+    <!-- -------------------------------------------------
+         SEARCH RESULTS SECTION (Hidden by default)
+    --------------------------------------------------- -->
+    <section id="results-section" class="results-section movie-section hidden">
+      <div class="section-header">
+        <div class="section-header-title">
+          <h2 id="results-title" class="section-title">Search Results</h2>
+          <span id="results-count" class="results-count-badge">0 results</span>
+        </div>
+        <div class="results-controls">
+          <div class="sort-wrapper glass">
+            <label for="sort-select">Sort By:</label>
+            <select id="sort-select" class="sort-select">
+              <option value="default">Relevance</option>
+              <option value="year-desc">Year (Newest)</option>
+              <option value="year-asc">Year (Oldest)</option>
+              <option value="title-asc">Title (A-Z)</option>
+              <option value="title-desc">Title (Z-A)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="movie-grid" class="movie-grid">
+        <!-- Search result cards injected here -->
+      </div>
+
+      <div id="pagination" class="pagination">
+        <!-- Pagination controls injected here -->
+      </div>
+    </section>
+
+    <!-- Empty State for Search -->
+    <div id="empty-state" class="empty-state hidden">
+      <div class="empty-state-icon">🔍</div>
+      <h3>No Movies Found</h3>
+      <p>We couldn't find any titles matching your search. Try adjusting spelling or using general keywords.</p>
+    </div>
+
+    <!-- -------------------------------------------------
+         DASHBOARD SECTIONS (Trending, Popular, Recent, Favorites)
+    --------------------------------------------------- -->
+    
+    <!-- Trending Movies -->
+    <section id="trending" class="movie-section scroll-reveal">
+      <h2 class="section-title">Trending Movies</h2>
+      <div class="carousel-container">
+        <div class="carousel" id="trending-carousel" data-section="trending">
+          <!-- Dynamically filled with real OMDb API data -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Movies -->
+    <section id="popular" class="movie-section scroll-reveal">
+      <h2 class="section-title">Popular Movies</h2>
+      <div class="carousel-container">
+        <div class="carousel" id="popular-carousel" data-section="popular">
+          <!-- Dynamically filled with real OMDb API data -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Recently Viewed -->
+    <section id="recent" class="movie-section scroll-reveal">
+      <h2 class="section-title">Recently Viewed</h2>
+      <div class="carousel-container">
+        <div class="carousel" id="recent-carousel" data-section="recent">
+          <!-- Content rendered from history in script.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Favorites Slider (Personal Universe) -->
+    <section id="favorites-section" class="movie-section scroll-reveal">
+      <div class="section-header">
+        <h2 class="section-title">My Movie Universe</h2>
+        <button id="clear-favorites-btn" class="clear-favorites-btn btn-ripple glass hidden">Clear Watchlist</button>
+      </div>
+      <div class="carousel-container">
+        <div id="favorites-grid" class="carousel" data-section="favorites">
+          <!-- Content rendered from favorites list -->
+        </div>
+      </div>
+      <div id="empty-favorites" class="empty-favorites-container">
+        <p class="empty-favorites-text">Your Watchlist is empty. Tap the heart on any card to build your universe.</p>
+      </div>
+    </section>
+
+    <!-- Search History Section -->
+    <section id="history-section" class="movie-section scroll-reveal hidden">
+      <div class="section-header">
+        <h2 class="section-title">Search History</h2>
+        <button id="clear-history-btn" class="clear-history-btn btn-ripple glass">Clear History</button>
+      </div>
+      <div id="history-list" class="history-list"></div>
+      <p id="empty-history" class="empty-history-text hidden">No search history recorded yet.</p>
+    </section>
+
+  </main>
+
+  <!-- -------------------------------------------------
+       FAVORITES DRAWER
+  --------------------------------------------------- -->
+  <aside id="favorites-drawer" class="favorites-drawer glass">
+    <header class="favorites-header">
+      <h2>My Favorites</h2>
+      <button id="close-fav-drawer" class="close-btn btn-ripple" aria-label="Close favorites">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+      </button>
+    </header>
+    <div id="favorites-list" class="favorites-list">
+      <!-- List items rendered here -->
+    </div>
+  </aside>
+
+  <!-- -------------------------------------------------
+       MODAL – cinematic movie details
+  --------------------------------------------------- -->
+  <div id="modal-overlay" class="modal hidden" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <button id="modal-close" class="modal-close btn-ripple" aria-label="Close details">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
+      </button>
+      
+      <div class="modal-body">
+        <!-- Poster & Interactive buttons -->
+        <div class="modal-media">
+          <img id="modal-poster" src="https://via.placeholder.com/400x600?text=Loading..." alt="Movie poster" />
+          <div class="modal-media-actions">
+            <!-- Favorite button -->
+            <button id="modal-fav-btn" class="modal-action-btn btn-ripple glass">
+              <span id="modal-fav-icon" class="modal-fav-icon">♡</span>
+              <span>Watchlist</span>
+            </button>
+            <!-- IMDb Link -->
+            <a id="modal-imdb-link" href="#" target="_blank" rel="noopener" class="modal-action-btn btn-ripple glass highlight">
+              <span>IMDb Profile</span>
+              <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Meta info columns -->
+        <div class="modal-info">
+          <h2 id="modal-title" class="modal-title">Movie Title</h2>
+          
+          <div class="modal-metadata">
+            <span id="meta-year" class="meta-tag">2026</span>
+            <span id="meta-rated" class="meta-tag">PG-13</span>
+            <span id="meta-runtime" class="meta-tag">120 min</span>
+            <div class="rating-badge">
+              <span class="star">⭐</span>
+              <span id="modal-rating-value">8.4</span>/10
+            </div>
+          </div>
+
+          <div id="modal-genres" class="genre-tags-list">
+            <!-- Genre buttons inserted here -->
+          </div>
+
+          <div class="modal-divider"></div>
+
+          <div class="info-section">
+            <h4>Plot Summary</h4>
+            <p id="modal-plot" class="modal-plot">Loading summary information...</p>
+          </div>
+
+          <div class="modal-divider"></div>
+
+          <div class="info-grid">
+            <div class="info-grid-item">
+              <span class="label">Director</span>
+              <span id="modal-director" class="value">Loading director...</span>
+            </div>
+            <div class="info-grid-item">
+              <span class="label">Actors</span>
+              <span id="modal-actors" class="value">Loading cast members...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- -------------------------------------------------
+       Overlay states
+  --------------------------------------------------- -->
+  <!-- Spinner Loader -->
+  <div id="loading-state" class="overlay loading hidden">
+    <div class="spinner-container">
+      <div class="spinner"></div>
+      <p class="loading-text">Exploring movies...</p>
+    </div>
+  </div>
+
+  <!-- Error display -->
+  <div id="error-state" class="overlay error hidden">
+    <div class="error-container glass">
+      <div class="error-icon">⚠️</div>
+      <p id="error-message">Oops! Something went wrong.</p>
+      <button id="retry-btn" class="retry-btn glass btn-ripple">Try Again</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="back-to-top btn-ripple btn-magnetic" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+  </button>
+
+  <!-- -------------------------------------------------
+       JavaScript
+  --------------------------------------------------- -->
+  <script src="script.js"></script>
+</body>
+</html>
