@@ -227,11 +227,14 @@ body {
   background: var(--color-accent);
   border-radius: 50%;
   position: fixed;
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
-  transform: translate(-50%, -50%) scale(1);
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  /* FIX: start off-screen; JS drives position via translate3d from top-left origin */
+  transform: translate3d(-100px, -100px, 0);
+  transition: opacity 0.3s ease;
   opacity: 0;
 }
 
@@ -280,7 +283,10 @@ body:hover .cursor-glow {
   border-left: none;
   border-right: none;
   border-top: none;
-  background: rgba(var(--bg-color-h), var(--bg-color-s), var(--bg-color-l), 0.75);
+  /* FIX: hsl vars can't be used inside rgba(); use a solid semi-transparent bg instead */
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .navbar-container {
@@ -441,7 +447,8 @@ body:hover .cursor-glow {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  display: flex;
+  /* FIX: start hidden; JS shows it when count > 0 */
+  display: none;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -1507,7 +1514,11 @@ body:hover .cursor-glow {
 .modal-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* FIX: flex-start so content doesn't float to vertical center with gaps */
+  justify-content: flex-start;
+  gap: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
 }
 
 .modal-title {
@@ -1844,12 +1855,24 @@ body:hover .cursor-glow {
 /* --------------------------------------------------------------------------
    16. Pagination styling
    -------------------------------------------------------------------------- */
+
+/* FIX: .page-dots used in JS but was missing from CSS */
+.page-dots {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  user-select: none;
+  line-height: 1;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
   margin-top: 3rem;
+  flex-wrap: wrap;
 }
 
 .page-btn {
@@ -1886,11 +1909,16 @@ body:hover .cursor-glow {
    -------------------------------------------------------------------------- */
 .ripple-span {
   position: absolute;
-  background: rgba(255, 255, 255, 0.35);
+  /* FIX: must have a size - without width/height the element is 0x0 and invisible */
+  width: 100px;
+  height: 100px;
+  margin-left: -50px;
+  margin-top: -50px;
+  background: rgba(255, 255, 255, 0.28);
   border-radius: 50%;
   pointer-events: none;
   transform: scale(0);
-  animation: ripple-click 0.6s linear;
+  animation: ripple-click 0.6s linear forwards;
 }
 
 @keyframes ripple-click {
@@ -1905,6 +1933,24 @@ body:hover .cursor-glow {
    -------------------------------------------------------------------------- */
 .hidden {
   display: none !important;
+}
+
+/* FIX: .empty-state-text is used in JS carousel error fallback but had no style */
+.empty-state-text {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  width: 100%;
+  line-height: 1.5;
+}
+
+/* FIX: .history-list holds .quick-tag pills but had no layout */
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
 }
 
 .overlay {
@@ -1936,7 +1982,29 @@ body:hover .cursor-glow {
 }
 
 /* --------------------------------------------------------------------------
-   19. Responsive Tweaks & Breakpoints
+   19. Scroll-Reveal Animation
+   -------------------------------------------------------------------------- */
+/* FIX: .scroll-reveal is applied in HTML but was never defined in CSS */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  animation: reveal-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.movie-section:nth-child(2).scroll-reveal { animation-delay: 0.05s; }
+.movie-section:nth-child(3).scroll-reveal { animation-delay: 0.12s; }
+.movie-section:nth-child(4).scroll-reveal { animation-delay: 0.18s; }
+.movie-section:nth-child(5).scroll-reveal { animation-delay: 0.24s; }
+
+@keyframes reveal-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   20. Responsive Tweaks & Breakpoints
    -------------------------------------------------------------------------- */
 @media (max-width: 1024px) {
   .modal-body {

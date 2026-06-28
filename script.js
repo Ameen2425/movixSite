@@ -1,4 +1,4 @@
-﻿// ============================================================
+// ============================================================
 // script.js  -  MOVIX  Movie Website
 // ============================================================
 // BEGINNER'S GUIDE TO THIS FILE
@@ -854,7 +854,7 @@ function updateFavoritesUI() {
       card.className = "fav-card";
 
       const img = document.createElement("img");
-      img.src = (movie.Poster !== "N/A") ? movie.Poster : "https://via.placeholder.com/70x100?text=No+Poster";
+      img.src = (movie.Poster !== "N/A") ? movie.Poster : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='100' viewBox='0 0 70 100'%3E%3Crect width='70' height='100' fill='%230f172a'/%3E%3Ctext x='35' y='54' font-family='system-ui' font-size='20' fill='%234b5563' text-anchor='middle'%3E🎬%3C/text%3E%3C/svg%3E";
       img.alt = movie.Title;
 
       const meta = document.createElement("div");
