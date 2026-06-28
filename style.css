@@ -1330,19 +1330,49 @@ body:hover .cursor-glow {
   transform: scale(1.05);
 }
 
+/* Numbered rank label on fav-card */
+.fav-card .rank {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* Empty Favorites styles */
 .empty-favorites-container {
   text-align: center;
-  padding: 3rem 1.5rem;
+  padding: 4rem 2rem;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed var(--glass-border);
-  border-radius: var(--border-radius-md);
+  border: 1px dashed rgba(var(--color-primary-rgb), 0.2);
+  border-radius: var(--border-radius-lg);
   margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-favorites-container::before {
+  content: '\2665'; /* ♥ */
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: block;
+  filter: drop-shadow(0 0 20px rgba(var(--color-primary-rgb), 0.4));
+  animation: float 3s ease-in-out infinite;
 }
 
 .empty-favorites-text {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 340px;
 }
 
 .clear-favorites-btn,
@@ -1490,6 +1520,19 @@ body:hover .cursor-glow {
 .modal-action-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
+}
+
+/* Active = movie IS in watchlist */
+.modal-action-btn.active {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.25), rgba(236, 72, 153, 0.15));
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #f87171;
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.2);
+}
+
+.modal-action-btn.active:hover {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.35), rgba(236, 72, 153, 0.25));
+  box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
 }
 
 .modal-action-btn.highlight {

@@ -112,6 +112,7 @@ const elems = {
   favoritesGrid:    document.getElementById("favorites-grid"),
   emptyFavorites:   document.getElementById("empty-favorites"),
   clearFavBtn:      document.getElementById("clear-favorites-btn"),
+  favCountBadge:    document.getElementById("fav-count-badge"),
 
   // --- History section ---
   historySection:  document.getElementById("history-section"),
@@ -647,7 +648,7 @@ function createMovieCard(movie, container, isWatchlistCard) {
     }
   }
 
-  favBtn.innerHTML = alreadyInFavs ? "â¤ï¸" : "ðŸ¤";
+  favBtn.innerHTML = alreadyInFavs ? "\u2764\uFE0F" : "\uD83E\uDD0D";  // ❤️ or 🤍
   if (alreadyInFavs) favBtn.classList.add("active");
 
   favBtn.addEventListener("click", function (event) {
@@ -663,7 +664,7 @@ function createMovieCard(movie, container, isWatchlistCard) {
       }
     }
     favBtn.classList.toggle("active", nowInFavs);
-    favBtn.innerHTML = nowInFavs ? "â¤ï¸" : "ðŸ¤";
+    favBtn.innerHTML = nowInFavs ? "\u2764\uFE0F" : "\uD83E\uDD0D";  // ❤️ or 🤍
 
     if (isWatchlistCard && !nowInFavs) {
       card.remove();  // Hide card if removed from watchlist section
@@ -743,7 +744,7 @@ async function openMovieModal(imdbID) {
           break;
         }
       }
-      elems.modalFavIcon.textContent = inFav ? "â¤ï¸" : "â™¡";
+      elems.modalFavIcon.textContent = inFav ? "\u2764\uFE0F" : "\u2661";  // ❤️ or ♡
       elems.modalFavBtn.classList.toggle("active", inFav);
     }
     updateModalFavBtn();
@@ -826,6 +827,16 @@ function updateFavoritesUI() {
   elems.favBadge.textContent   = count;
   elems.favBadge.style.display = count > 0 ? "flex" : "none";
 
+  // Update the section header count badge
+  if (elems.favCountBadge) {
+    if (count > 0) {
+      elems.favCountBadge.textContent = count + " saved";
+      elems.favCountBadge.style.display = "inline-flex";
+    } else {
+      elems.favCountBadge.style.display = "none";
+    }
+  }
+
   // Redraw the favorites grid on the main page
   elems.favoritesGrid.innerHTML = "";
   if (count === 0) {
@@ -844,17 +855,25 @@ function updateFavoritesUI() {
   if (count === 0) {
     const emptyText = document.createElement("p");
     emptyText.className   = "empty-favorites-text";
-    emptyText.textContent = "Your watchlist is empty.";
+    emptyText.textContent = "Your watchlist is empty. Search for a movie and tap \u2665 to add it here.";
+    emptyText.style.cssText = "text-align:center;padding:2rem 1rem;";
     elems.favoritesList.appendChild(emptyText);
   } else {
     for (let j = 0; j < appState.favorites.length; j++) {
       let movie = appState.favorites[j];
+      const rankNum = j + 1;  // 1-based position in the list
 
       const card = document.createElement("div");
       card.className = "fav-card";
 
+      // Rank label (e.g. #1, #2)
+      const rankEl = document.createElement("span");
+      rankEl.className = "rank";
+      rankEl.textContent = "#" + rankNum;
+      card.appendChild(rankEl);
+
       const img = document.createElement("img");
-      img.src = (movie.Poster !== "N/A") ? movie.Poster : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='100' viewBox='0 0 70 100'%3E%3Crect width='70' height='100' fill='%230f172a'/%3E%3Ctext x='35' y='54' font-family='system-ui' font-size='20' fill='%234b5563' text-anchor='middle'%3E🎬%3C/text%3E%3C/svg%3E";
+      img.src = (movie.Poster !== "N/A") ? movie.Poster : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='100' viewBox='0 0 70 100'%3E%3Crect width='70' height='100' fill='%230f172a'/%3E%3Ctext x='35' y='54' font-family='system-ui' font-size='20' fill='%234b5563' text-anchor='middle'%3E%F0%9F%8E%AC%3C/text%3E%3C/svg%3E";
       img.alt = movie.Title;
 
       const meta = document.createElement("div");
@@ -866,11 +885,11 @@ function updateFavoritesUI() {
 
       const yearEl = document.createElement("div");
       yearEl.className   = "year";
-      yearEl.textContent = movie.Year;
+      yearEl.textContent = movie.Year + (movie.Type ? " \u00B7 " + movie.Type.toUpperCase() : "");
 
       const removeBtn = document.createElement("button");
       removeBtn.className = "remove btn-ripple";
-      removeBtn.innerHTML = "âŒ Remove";
+      removeBtn.innerHTML = "\u274C Remove";
 
       // IIFE ensures each button refers to the correct movie
       (function (m) {
@@ -900,7 +919,7 @@ function updateFavoritesUI() {
     for (let k = 0; k < appState.favorites.length; k++) {
       if (appState.favorites[k].Title === openTitle) { isFav = true; break; }
     }
-    elems.modalFavIcon.textContent = isFav ? "â¤ï¸" : "â™¡";
+    elems.modalFavIcon.textContent = isFav ? "\u2764\uFE0F" : "\u2661";  // ❤️ or ♡
     elems.modalFavBtn.classList.toggle("active", isFav);
   }
 }
@@ -1021,7 +1040,7 @@ async function performSearch(query, page) {
       elems.emptyState.classList.remove("hidden");
     } else {
       elems.errorMsg.textContent = error.message;
-      elems.errorState.classList.remove("hidden");
+      elems.errorState.classList.remove("hidden");  // SHOW the error panel
     }
     showToast(error.message, "error");
   }
@@ -1081,7 +1100,7 @@ function renderPaginationControls() {
     return btn;
   }
 
-  container.appendChild(makePageBtn("â†", appState.currentPage - 1, false, appState.currentPage === 1));
+  container.appendChild(makePageBtn("\u2190", appState.currentPage - 1, false, appState.currentPage === 1));
 
   const range = 2;
   let start = Math.max(1, appState.currentPage - range);
@@ -1111,7 +1130,7 @@ function renderPaginationControls() {
     container.appendChild(makePageBtn(appState.totalPages, appState.totalPages, false, false));
   }
 
-  container.appendChild(makePageBtn("â†’", appState.currentPage + 1, false, appState.currentPage === appState.totalPages));
+  container.appendChild(makePageBtn("\u2192", appState.currentPage + 1, false, appState.currentPage === appState.totalPages));
 }
 
 
@@ -1230,7 +1249,7 @@ function initTheme() {
 
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
-  elems.themeIcon.textContent = theme === "dark" ? "ðŸŒ™" : "â˜€ï¸";
+  elems.themeIcon.textContent = theme === "dark" ? "\uD83C\uDF19" : "\u2600\uFE0F";  // 🌙 or ☀️
   storageSet("theme", theme);
 }
 
