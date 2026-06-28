@@ -1424,6 +1424,10 @@ body:hover .cursor-glow {
   -webkit-backdrop-filter: blur(15px);
 }
 
+body.modal-open {
+  overflow: hidden !important;
+}
+
 .modal-content {
   position: relative;
   width: 100%;
@@ -1438,6 +1442,41 @@ body:hover .cursor-glow {
   padding: 2.5rem;
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
+}
+
+/* Adjust modal styles on short screens to prevent contents cutting off */
+@media (max-height: 720px) {
+  .modal {
+    padding: 1rem;
+  }
+  .modal-content {
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+  .modal-body {
+    gap: 1.5rem;
+  }
+  .modal-media {
+    gap: 1rem;
+  }
+  .modal-media img {
+    max-height: 280px;
+    width: auto;
+    margin: 0 auto;
+  }
+  .modal-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .modal-metadata {
+    margin-bottom: 1rem;
+  }
+  .genre-tags-list {
+    margin-bottom: 1rem;
+  }
+  .modal-divider {
+    margin: 1rem 0;
+  }
 }
 
 .modal.active .modal-content {

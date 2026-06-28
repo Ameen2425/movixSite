@@ -754,10 +754,11 @@ async function openMovieModal(imdbID) {
       updateModalFavBtn();
     };
 
-    // Show the modal
+    // Show the modal and lock background scroll
     elems.modalOverlay.classList.remove("hidden");
     elems.modalOverlay.setAttribute("aria-hidden", "false");
     elems.modalOverlay.classList.add("active");
+    document.body.classList.add("modal-open");  // Prevents background scroll
 
     addToRecent(data);  // Add to recently viewed list
 
@@ -772,6 +773,7 @@ async function openMovieModal(imdbID) {
 function closeModal() {
   elems.modalOverlay.classList.remove("active");
   elems.modalOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");  // Re-enable background scroll
 
   // Wait for the closing animation then hide completely
   setTimeout(function () {
