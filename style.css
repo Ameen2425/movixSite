@@ -1432,8 +1432,8 @@ body.modal-open {
   position: relative;
   width: 100%;
   max-width: 920px;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: 85vh;
+  overflow: hidden; /* Pinned header/poster, scroll inner details only */
   border-radius: var(--border-radius-lg);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
   z-index: 10;
@@ -1451,10 +1451,11 @@ body.modal-open {
   }
   .modal-content {
     padding: 1.5rem;
-    max-height: 95vh;
+    max-height: 92vh;
   }
   .modal-body {
     gap: 1.5rem;
+    max-height: calc(92vh - 3rem) !important;
   }
   .modal-media {
     gap: 1rem;
@@ -1518,6 +1519,7 @@ body.modal-open {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
   gap: 3rem;
+  max-height: calc(85vh - 5rem);
 }
 
 .modal-media {
@@ -1600,7 +1602,25 @@ body.modal-open {
   justify-content: flex-start;
   gap: 0;
   overflow-y: auto;
-  padding-right: 0.25rem;
+  padding-right: 1.5rem; /* extra padding for custom scrollbar */
+  max-height: 100%;
+}
+
+.modal-info::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-info::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-info::-webkit-scrollbar-thumb {
+  background: rgba(var(--color-primary-rgb), 0.25);
+  border-radius: 99px;
+}
+
+.modal-info::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--color-primary-rgb), 0.5);
 }
 
 .modal-title {
@@ -2089,14 +2109,24 @@ body.modal-open {
    20. Responsive Tweaks & Breakpoints
    -------------------------------------------------------------------------- */
 @media (max-width: 1024px) {
+  .modal-content {
+    overflow-y: auto !important; /* Let main modal scroll on mobile */
+  }
   .modal-body {
     grid-template-columns: 1fr;
     gap: 2rem;
+    max-height: none !important; /* Remove height limits */
+    overflow: visible !important;
   }
   .modal-media {
     max-width: 350px;
     margin: 0 auto;
     width: 100%;
+  }
+  .modal-info {
+    overflow-y: visible !important;
+    max-height: none !important;
+    padding-right: 0 !important;
   }
 }
 
